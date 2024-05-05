@@ -37,7 +37,7 @@
 
 لدينا العديد من [التجاويف](https://docs.docker.com/compose/extends/):
 
-- `overrides/compose.proxy.yaml`. يضيف Traefik proxy إلى الإعداد.
+- هنا `overrides/compose.proxy.yaml`. يضيف Traefik proxy إلى الإعداد.
 - `overrides/compose.noproxy.yaml`. ينشر منافذ `frontend` مباشرة دون أي بروكسي.
 - `overrides/compose.https.yaml`. يضبط تلقائيًا شهادة Let's Encrypt ويوجه جميع الطلبات إلى تحويلها من http إلى https.
 - `overrides/compose.mariadb.yaml`. يضيف خدمة `db` ويضبط صورتها على MariaDB.
