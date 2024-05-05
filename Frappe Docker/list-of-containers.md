@@ -49,6 +49,7 @@
 من السهل تشغيل التجاويف. كل ما علينا فعله هو تحديد ملفات الإيقاف التي يجب استخدامها بواسطة docker-compose. على سبيل المثال، نريد ERPNext:
 
 ```bash
+# command 
 # استشهد إلى ملف الإيقاف الرئيسي (compose.yaml) وأضف واحد إضافي.
 docker-compose -f compose.yaml -f overrides/compose.redis.yaml config
 ```
