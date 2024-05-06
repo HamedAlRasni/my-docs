@@ -7,8 +7,8 @@
 - تثبيت دوكر ودوكر كومبوز v2 على خادم لينكس.
 - تثبيت خدمة تريفيك (Traefik) لتوزيع الأحمال الداخلية والحصول على شهادات SSL/TLS تلقائيًا.
 - تثبيت قاعدة بيانات ماريا دي بي باستخدام حاويات (containers).
-- إعداد مشروع يسمى `erpnext-one` وإنشاء مواقع `one.example.com` و `two.example.com` في المشروع.
-- إعداد مشروع يسمى `erpnext-two` وإنشاء مواقع `three.example.com` و `four.example.com` في المشروع.
+- إعداد مشروع يسمى `bench-one` وإنشاء مواقع `demo.hamedalrasni.com` و `two.hamedalrasni.com` في المشروع.
+- إعداد مشروع يسمى `bench-two` وإنشاء مواقع `three.hamedalrasni.com` و `four.hamedalrasni.com` في المشروع.
 
 توضيح:
 
@@ -63,22 +63,22 @@ mkdir ~/gitops
 أنشئ ملفًا يُسمى `traefik.env` في `~/gitops`
 
 ```shell
-echo 'TRAEFIK_DOMAIN=traefik.example.com' > ~/gitops/traefik.env
-echo 'EMAIL=admin@example.com' >> ~/gitops/traefik.env
+echo 'TRAEFIK_DOMAIN=traefik.hamedalrasni.com' > ~/gitops/traefik.env
+echo 'EMAIL=admin@hamedalrasni.com' >> ~/gitops/traefik.env
 echo 'HASHED_PASSWORD='$(openssl passwd -apr1 changeit | sed 's/\$/\\\$/g') >> ~/gitops/traefik.env
 ```
 
 ملاحظة:
 
-- قم بتغيير النطاق من `traefik.example.com` إلى النطاق المستخدم في الإنتاج. يجب أن يشير إدخال DNS إلى عنوان IP للخادم.
-- قم بتغيير عنوان البريد الإلكتروني للإخطارات من `admin@example.com` إلى البريد الإلكتروني الصحيح.
+- قم بتغيير النطاق من `traefik.hamedalrasni.com` إلى النطاق المستخدم في الإنتاج. يجب أن يشير إدخال DNS إلى عنوان IP للخادم.
+- قم بتغيير عنوان البريد الإلكتروني للإخطارات من `admin@hamedalrasni.com` إلى البريد الإلكتروني الصحيح.
 - قم بتغيير كلمة المرور من `changeit` إلى كلمة مرور أكثر أمانًا.
 
 سيبدو ملف env الذي تم إنشاؤه في المسار `~/gitops/traefik.env` كالتالي:
 
 ```env
-TRAEFIK_DOMAIN=traefik.example.com
-EMAIL=admin@example.com
+TRAEFIK_DOMAIN=traefik.hamedalrasni.com
+EMAIL=admin@hamedalrasni.com
 HASHED_PASSWORD=$apr1$K.4gp7RT$tj9R2jHh0D4Gb5o5fIAzm/
 ```
 
@@ -93,7 +93,7 @@ docker compose --project-name traefik \
   -f overrides/compose.traefik-ssl.yaml up -d
 ```
 
-سيجعل ذلك لوحة تحكم traefik متاحة على `traefik.example.com` وسيتم تخزين جميع الشهادات في حجم دوكر `cert-data`.
+سيجعل ذلك لوحة تحكم traefik متاحة على `traefik.hamedalrasni.com` وسيتم تخزين جميع الشهادات في حجم دوكر `cert-data`.
 
 لإعداد LAN، نشر حاوية traefik بدون تجاوز `overrides/compose.traefik-ssl.yaml`.
 
@@ -131,115 +131,115 @@ docker compose --project-name mariadb --env-file ~/gitops/mariadb.env -f overrid
 
 #### إنشاء المقاعد الأولى
 
-إنشاء المقعد الأول المسمى `erpnext-one` مع `one.example.com` و `two.example.com`
+إنشاء المقعد الأول المسمى `bench-one` مع `demo.hamedalrasni.com` و `two.hamedalrasni.com`
 
-أنشئ ملفًا يُسمى `erpnext-one.env` في `~/gitops`
+أنشئ ملفًا يُسمى `bench-one.env` في `~/gitops`
 
 ```shell
-cp example.env ~/gitops/erpnext-one.env
-sed -i 's/DB_PASSWORD=123/DB_PASSWORD=changeit/g' ~/gitops/erpnext-one.env
-sed -i 's/DB_HOST=/DB_HOST=mariadb-database/g' ~/gitops/erpnext-one.env
-sed -i 's/DB_PORT=/DB_PORT=3306/g' ~/gitops/erpnext-one.env
-sed -i 's/SITES=`erp.example.com`/SITES=\`one.example.com\`,\`two.example.com\`/g' ~/gitops/erpnext-one.env
-echo 'ROUTER=erpnext-one' >> ~/gitops/erpnext-one.env
-echo "BENCH_NETWORK=erpnext-one" >> ~/gitops/erpnext-one.env
+cp hamedalrasni.env ~/gitops/bench-one.env
+sed -i 's/DB_PASSWORD=123/DB_PASSWORD=changeit/g' ~/gitops/bench-one.env
+sed -i 's/DB_HOST=/DB_HOST=mariadb-database/g' ~/gitops/bench-one.env
+sed -i 's/DB_PORT=/DB_PORT=3306/g' ~/gitops/bench-one.env
+sed -i 's/SITES=`erp.hamedalrasni.com`/SITES=\`demo.hamedalrasni.com\`,\`two.hamedalrasni.com\`/g' ~/gitops/bench-one.env
+echo 'ROUTER=bench-one' >> ~/gitops/bench-one.env
+echo "BENCH_NETWORK=bench-one" >> ~/gitops/bench-one.env
 ```
 
 ملاحظة:
 
 - قم بتغيير كلمة المرور من `changeit` إلى تلك التي تم تعيينها لماريا دي بي كومبوز في الخطوة السابقة.
 
-يتم إنشاء ملف env في المسار `~/gitops/erpnext-one.env`.
+يتم إنشاء ملف env في المسار `~/gitops/bench-one.env`.
 
-أنشئ ملف yaml يُسمى `erpnext-one.yaml` في دليل `~/gitops`:
+أنشئ ملف yaml يُسمى `bench-one.yaml` في دليل `~/gitops`:
 
 ```shell
-docker compose --project-name erpnext-one \
-  --env-file ~/gitops/erpnext-one.env \
+docker compose --project-name bench-one \
+  --env-file ~/gitops/bench-one.env \
   -f compose.yaml \
   -f overrides/compose.redis.yaml \
   -f overrides/compose.multi-bench.yaml \
-  -f overrides/compose.multi-bench-ssl.yaml config > ~/gitops/erpnext-one.yaml
+  -f overrides/compose.multi-bench-ssl.yaml config > ~/gitops/bench-one.yaml
 ```
 
 لإعداد LAN، لا تعدل على `compose.multi-bench-ssl.yaml`.
 
-استخدم الأمر أعلاه بعد أي تغييرات تتم على ملف `erpnext-one.env` لإعادة إنشاء `~/gitops/erpnext-one.yaml`. مثال: بعد تغيير الإصدار لتهجير المقعد.
+استخدم الأمر أعلاه بعد أي تغييرات تتم على ملف `bench-one.env` لإعادة إنشاء `~/gitops/bench-one.yaml`. مثال: بعد تغيير الإصدار لتهجير المقعد.
 
-نشر حاويات `erpnext-one`:
+نشر حاويات `bench-one`:
 
 ```shell
-docker compose --project-name erpnext-one -f ~/gitops/erpnext-one.yaml up -d
+docker compose --project-name bench-one -f ~/gitops/bench-one.yaml up -d
 ```
 
-إنشاء المواقع `one.example.com` و `two.example.com`:
+إنشاء المواقع `demo.hamedalrasni.com` و `two.hamedalrasni.com`:
 
 ```shell
-# one.example.com
-docker compose --project-name erpnext-one exec backend \
-  bench new-site --no-mariadb-socket --mariadb-root-password changeit --install-app erpnext --admin-password changeit one.example.com
+# demo.hamedalrasni.com
+docker compose --project-name bench-one exec backend \
+  bench new-site --no-mariadb-socket --mariadb-root-password changeit --install-app erpnext --admin-password changeit demo.hamedalrasni.com
 ```
 
 يمكنك التوقف هنا واكتمال إعداد مقعد واحد وموقع واحد. تابع لإضافة موقع إضافي إلى المقعد الحالي.
 
 ```shell
-# two.example.com
-docker compose --project-name erpnext-one exec backend \
-  bench new-site --no-mariadb-socket --mariadb-root-password changeit --install-app erpnext --admin-password changeit two.example.com
+# two.hamedalrasni.com
+docker compose --project-name bench-one exec backend \
+  bench new-site --no-mariadb-socket --mariadb-root-password changeit --install-app erpnext --admin-password changeit two.hamedalrasni.com
 ```
 
 #### إنشاء مقعد ثاني
 
 إعداد مقعد إضافي اختياري. استمر فقط إذا كنت بحاجة إلى إعداد مقاعد متعددة.
 
-إنشاء المقعد الثاني المسمى `erpnext-two` مع `three.example.com` و `four.example.com`
+إنشاء المقعد الثاني المسمى `bench-two` مع `three.hamedalrasni.com` و `four.hamedalrasni.com`
 
-أنشئ ملفًا يُسمى `erpnext-two.env` في `~/gitops`
+أنشئ ملفًا يُسمى `bench-two.env` في `~/gitops`
 
 ```shell
-curl -sL https://raw.githubusercontent.com/frappe/frappe_docker/main/example.env -o ~/gitops/erpnext-two.env
-sed -i 's/DB_PASSWORD=123/DB_PASSWORD=changeit/g' ~/gitops/erpnext-two.env
-sed -i 's/DB_HOST=/DB_HOST=mariadb-database/g' ~/gitops/erpnext-two.env
-sed -i 's/DB_PORT=/DB_PORT=3306/g' ~/gitops/erpnext-two.env
-echo "ROUTER=erpnext-two" >> ~/gitops/erpnext-two.env
-echo "SITES=\`three.example.com\`,\`four.example.com\`" >> ~/gitops/erpnext-two.env
-echo "BENCH_NETWORK=erpnext-two" >> ~/gitops/erpnext-two.env
+curl -sL https://raw.githubusercontent.com/frappe/frappe_docker/main/hamedalrasni.env -o ~/gitops/bench-two.env
+sed -i 's/DB_PASSWORD=123/DB_PASSWORD=changeit/g' ~/gitops/bench-two.env
+sed -i 's/DB_HOST=/DB_HOST=mariadb-database/g' ~/gitops/bench-two.env
+sed -i 's/DB_PORT=/DB_PORT=3306/g' ~/gitops/bench-two.env
+echo "ROUTER=bench-two" >> ~/gitops/bench-two.env
+echo "SITES=\`three.hamedalrasni.com\`,\`four.hamedalrasni.com\`" >> ~/gitops/bench-two.env
+echo "BENCH_NETWORK=bench-two" >> ~/gitops/bench-two.env
 ```
 
 ملحوظة:
 
 - قم بتغيير كلمة المرور من `changeit` إلى تلك التي تم تعيينها لماريا دي بي في الخطوة السابقة.
 
-تم إنشاء ملف البيئة في المسار `~/gitops/erpnext-two.env`.
+تم إنشاء ملف البيئة في المسار `~/gitops/bench-two.env`.
 
-أنشئ ملفًا yaml يُسمى `erpnext-two.yaml` في دليل `~/gitops`:
+أنشئ ملفًا yaml يُسمى `bench-two.yaml` في دليل `~/gitops`:
 
 ```shell
-docker compose --project-name erpnext-two \
-  --env-file ~/gitops/erpnext-two.env \
+docker compose --project-name bench-two \
+  --env-file ~/gitops/bench-two.env \
   -f compose.yaml \
   -f overrides/compose.redis.yaml \
   -f overrides/compose.multi-bench.yaml \
-  -f overrides/compose.multi-bench-ssl.yaml config > ~/gitops/erpnext-two.yaml
+  -f overrides/compose.multi-bench-ssl.yaml config > ~/gitops/bench-two.yaml
 ```
 
-استخدم الأمر أعلاه بعد أي تغييرات تُجرى على ملف `erpnext-two.env` لإعادة إنشاء `~/gitops/erpnext-two.yaml`. على سبيل المثال، بعد تغيير الإصدار لترقية المقاعد.
+استخدم الأمر أعلاه بعد أي تغييرات تُجرى على ملف `bench-two.env` لإعادة إنشاء `~/gitops/bench-two.yaml`. على سبيل المثال، بعد تغيير الإصدار لترقية المقاعد.
 
-نشر حاويات `erpnext-two`:
+نشر حاويات `bench-two`:
 
 ```shell
-docker compose --project-name erpnext-two -f ~/gitops/erpnext-two.yaml up -d
+docker compose --project-name bench-two -f ~/gitops/bench-two.yaml up -d
 ```
 
-إنشاء المواقع `three.example.com` و `four.example.com`:
+إنشاء المواقع `three.hamedalrasni.com` و `four.hamedalrasni.com`:
 
 ```shell
-# three.example.com
-docker compose --project-name erpnext-two exec backend \
-  bench new-site --no-mariadb-socket --mariadb-root-password changeit --install-app erpnext --admin-password changeit three.example.com
-# four.example.com
-docker compose --project-name erpnext-two exec backend \
-  bench new-site --no-mariadb-socket --mariadb-root-password changeit --install-app erpnext --admin-password changeit four.example.com
+# three.hamedalrasni.com
+docker compose --project-name bench-two exec backend \
+  bench new-site --no-mariadb-socket --mariadb-root-password changeit --install-app erpnext --admin-password changeit three.hamedalrasni.com
+# four.hamedalrasni.com
+docker compose --project-name bench-two exec backend \
+  bench new-site --no-mariadb-socket --mariadb-root-password changeit --install-app erpnext --admin-password changeit four.hamedalrasni.com
 ```
 
 #### إنشاء نطاق مخصص للموقع الحالي
@@ -250,37 +250,37 @@ docker compose --project-name erpnext-two exec backend \
 أنشئ ملف بيئة:
 
 ```shell
-echo "ROUTER=custom-one-example" > ~/gitops/custom-one-example.env
-echo "SITES=\`custom-one.example.com\`" >> ~/gitops/custom-one-example.env
-echo "BASE_SITE=one.example.com" >> ~/gitops/custom-one-example.env
-echo "BENCH_NETWORK=erpnext-one" >> ~/gitops/custom-one-example.env
+echo "ROUTER=custom-demo-hamedalrasni" > ~/gitops/custom-demo-hamedalrasni.env
+echo "SITES=\`custom-demo.hamedalrasni.com\`" >> ~/gitops/custom-demo-hamedalrasni.env
+echo "BASE_SITE=demo.hamedalrasni.com" >> ~/gitops/custom-demo-hamedalrasni.env
+echo "BENCH_NETWORK=bench-one" >> ~/gitops/custom-demo-hamedalrasni.env
 ```
 
 ملحوظة:
 
-- قم بتغيير اسم الملف من `custom-one-example.env` إلى واحد منطقي.
-- غير قيمة المتغير `ROUTER` من `custom-one.example.com` إلى الموجود.
-- غير قيمة المتغير `SITES` من `custom-one.example.com` إلى الموجود. يمكنك إضافة مواقع متعددة مقترنة بعلامات backtick (`) ومفصولة بفواصل.
-- غير قيمة المتغير `BASE_SITE` من `one.example.com` إلى الموجود الذي يُشير إليه.
-- غير قيمة المتغير `BENCH_NETWORK` من `erpnext-one` إلى الموجود الذي تم إنشاؤه مع المقعد.
+- قم بتغيير اسم الملف من `custom-demo-hamedalrasni.env` إلى واحد منطقي.
+- غير قيمة المتغير `ROUTER` من `custom-demo.hamedalrasni.com` إلى الموجود.
+- غير قيمة المتغير `SITES` من `custom-demo.hamedalrasni.com` إلى الموجود. يمكنك إضافة مواقع متعددة مقترنة بعلامات backtick (`) ومفصولة بفواصل.
+- غير قيمة المتغير `BASE_SITE` من `demo.hamedalrasni.com` إلى الموجود الذي يُشير إليه.
+- غير قيمة المتغير `BENCH_NETWORK` من `bench-one` إلى الموجود الذي تم إنشاؤه مع المقعد.
 
 تم إنشاء ملف البيئة في المسار المذكور في الأمر.
 
 إنشاء yaml للوكيل العكسي:
 
 ```shell
-docker compose --project-name custom-one-example \
-  --env-file ~/gitops/custom-one-example.env \
+docker compose --project-name custom-demo-hamedalrasni \
+  --env-file ~/gitops/custom-demo-hamedalrasni.env \
   -f overrides/compose.custom-domain.yaml \
-  -f overrides/compose.custom-domain-ssl.yaml config > ~/gitops/custom-one-example.yaml
+  -f overrides/compose.custom-domain-ssl.yaml config > ~/gitops/custom-demo-hamedalrasni.yaml
 ```
 
 للإعداد المحلي، لا تستبدل `compose.custom-domain-ssl.yaml`.
 
-نشر حاويات `erpnext-two`:
+نشر حاويات `bench-two`:
 
 ```shell
-docker compose --project-name custom-one-example -f ~/gitops/custom-one-example.yaml up -d
+docker compose --project-name custom-demo-hamedalrasni -f ~/gitops/custom-demo-hamedalrasni.yaml up -d
 ```
 
 ### عمليات الموقع
