@@ -63,9 +63,9 @@ mkdir ~/gitops
 أنشئ ملفًا يُسمى `traefik.env` في `~/gitops`
 
 ```shell
-echo 'TRAEFIK_DOMAIN=traefik.hamedalrasni.com' > ~/gitops/traefik.env
-echo 'EMAIL=admin@hamedalrasni.com' >> ~/gitops/traefik.env
-echo 'HASHED_PASSWORD='$(openssl passwd -apr1 changeit | sed 's/\$/\\\$/g') >> ~/gitops/traefik.env
+echo 'TRAEFIK_DOMAIN=demo.hamedalrasni.com' > ~/gitops/demo.env
+echo 'EMAIL=demo@hamedalrasni.com' >> ~/gitops/demo.env
+echo 'HASHED_PASSWORD='$(openssl passwd -apr1 changeit | sed 's/\$/\\\$/g') >> ~/gitops/demo.env
 ```
 
 ملاحظة:
@@ -87,13 +87,13 @@ HASHED_PASSWORD=$apr1$K.4gp7RT$tj9R2jHh0D4Gb5o5fIAzm/
 نشر حاوية traefik مع SSL من letsencrypt
 
 ```shell
-docker compose --project-name traefik \
-  --env-file ~/gitops/traefik.env \
+docker compose --project-name demo \
+  --env-file ~/gitops/demo.env \
   -f overrides/compose.traefik.yaml \
   -f overrides/compose.traefik-ssl.yaml up -d
 ```
 
-سيجعل ذلك لوحة تحكم traefik متاحة على `traefik.hamedalrasni.com` وسيتم تخزين جميع الشهادات في حجم دوكر `cert-data`.
+سيجعل ذلك لوحة تحكم traefik متاحة على `demo.hamedalrasni.com` وسيتم تخزين جميع الشهادات في حجم دوكر `cert-data`.
 
 لإعداد LAN، نشر حاوية traefik بدون تجاوز `overrides/compose.traefik-ssl.yaml`.
 
@@ -131,16 +131,17 @@ docker compose --project-name mariadb --env-file ~/gitops/mariadb.env -f overrid
 
 #### إنشاء المقاعد الأولى
 
-إنشاء المقعد الأول المسمى `bench-one` مع `demo.hamedalrasni.com` و `two.hamedalrasni.com`
+إنشاء المقعد الأول المسمى `bench-one` مع `demo.hamedalrasni.com` و `dev.hamedalrasni.com`
 
 أنشئ ملفًا يُسمى `bench-one.env` في `~/gitops`
 
 ```shell
-cp hamedalrasni.env ~/gitops/bench-one.env
-sed -i 's/DB_PASSWORD=123/DB_PASSWORD=changeit/g' ~/gitops/bench-one.env
+cp example.env ~/gitops/bench-one.env
+sed -i 's/DB_PASSWORD=123/DB_PASSWORD=qeMuFqdPhmfpfNYm/g' ~/gitops/bench-one.env
+sed -i 's/LETSENCRYPT_EMAIL=mail@example.com/LETSENCRYPT_EMAIL=demo@hamedalrasni.com/g' ~/gitops/bench-one.env
 sed -i 's/DB_HOST=/DB_HOST=mariadb-database/g' ~/gitops/bench-one.env
 sed -i 's/DB_PORT=/DB_PORT=3306/g' ~/gitops/bench-one.env
-sed -i 's/SITES=`erp.hamedalrasni.com`/SITES=\`demo.hamedalrasni.com\`,\`two.hamedalrasni.com\`/g' ~/gitops/bench-one.env
+sed -i 's/SITES=`erp.example.com`/SITES=\`demo.hamedalrasni.com\`,\`dev.hamedalrasni.com\`/g' ~/gitops/bench-one.env
 echo 'ROUTER=bench-one' >> ~/gitops/bench-one.env
 echo "BENCH_NETWORK=bench-one" >> ~/gitops/bench-one.env
 ```
@@ -172,7 +173,7 @@ docker compose --project-name bench-one \
 docker compose --project-name bench-one -f ~/gitops/bench-one.yaml up -d
 ```
 
-إنشاء المواقع `demo.hamedalrasni.com` و `two.hamedalrasni.com`:
+إنشاء المواقع `demo.hamedalrasni.com` و `dev.hamedalrasni.com`:
 
 ```shell
 # demo.hamedalrasni.com
@@ -183,26 +184,27 @@ docker compose --project-name bench-one exec backend \
 يمكنك التوقف هنا واكتمال إعداد مقعد واحد وموقع واحد. تابع لإضافة موقع إضافي إلى المقعد الحالي.
 
 ```shell
-# two.hamedalrasni.com
+# dev.hamedalrasni.com
 docker compose --project-name bench-one exec backend \
-  bench new-site --no-mariadb-socket --mariadb-root-password changeit --install-app erpnext --admin-password changeit two.hamedalrasni.com
+  bench new-site --no-mariadb-socket --mariadb-root-password changeit --install-app erpnext --admin-password changeit dev.hamedalrasni.com
 ```
 
 #### إنشاء مقعد ثاني
 
 إعداد مقعد إضافي اختياري. استمر فقط إذا كنت بحاجة إلى إعداد مقاعد متعددة.
 
-إنشاء المقعد الثاني المسمى `bench-two` مع `three.hamedalrasni.com` و `four.hamedalrasni.com`
+إنشاء المقعد الثاني المسمى `bench-two` مع `three.hamedalrasni.com` و `ciscoo.hamedalrasni.com`
 
 أنشئ ملفًا يُسمى `bench-two.env` في `~/gitops`
 
 ```shell
-curl -sL https://raw.githubusercontent.com/frappe/frappe_docker/main/hamedalrasni.env -o ~/gitops/bench-two.env
+curl -sL https://raw.githubusercontent.com/frappe/frappe_docker/main/example.env -o ~/gitops/bench-two.env
 sed -i 's/DB_PASSWORD=123/DB_PASSWORD=changeit/g' ~/gitops/bench-two.env
+sed -i 's/LETSENCRYPT_EMAIL=mail@example.com/LETSENCRYPT_EMAIL=demo@hamedalrasni.com/g' ~/gitops/bench-two.env
 sed -i 's/DB_HOST=/DB_HOST=mariadb-database/g' ~/gitops/bench-two.env
 sed -i 's/DB_PORT=/DB_PORT=3306/g' ~/gitops/bench-two.env
 echo "ROUTER=bench-two" >> ~/gitops/bench-two.env
-echo "SITES=\`three.hamedalrasni.com\`,\`four.hamedalrasni.com\`" >> ~/gitops/bench-two.env
+echo "SITES=\`erp.example.com\`,\`ciscoo.hamedalrasni.com\`" >> ~/gitops/bench-two.env
 echo "BENCH_NETWORK=bench-two" >> ~/gitops/bench-two.env
 ```
 
@@ -286,3 +288,79 @@ docker compose --project-name custom-demo-hamedalrasni -f ~/gitops/custom-demo-h
 ### عمليات الموقع
 
 انظر: [عمليات الموقع](./site-operations.md)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+echo 'TRAEFIK_DOMAIN=demo.hamedalrasni.com' > ~/gitops/demo.env
+echo 'EMAIL=demo@hamedalrasni.com' >> ~/gitops/demo.env
+echo 'HASHED_PASSWORD='$(openssl passwd -apr1 demo | sed 's/\$/\\\$/g') >> ~/gitops/demo.env
+
+
+
+docker compose --project-name traefik \
+  --env-file ~/gitops/traefik.env \
+  -f overrides/compose.traefik.yaml \
+  -f overrides/compose.traefik-ssl.yaml up -d
+
+
+echo "DB_PASSWORD=qeMuFqdPhmfpfNYm" > ~/gitops/mariadb.env
+
+
+sudo docker compose --project-name bench-one exec backend \
+  bench new-site --no-mariadb-socket --mariadb-root-password qeMuFqdPhmfpfNYm --install-app erpnext --admin-password h6KoS6%3xe4%We dev.hamedalrasni.com
+
+
+
+
+curl -sL https://raw.githubusercontent.com/frappe/frappe_docker/main/example.env -o ~/gitops/bench-two.env
+sed -i 's/DB_PASSWORD=123/DB_PASSWORD=qeMuFqdPhmfpfNYm/g' ~/gitops/bench-two.env
+sed -i 's/LETSENCRYPT_EMAIL=mail@example.com/LETSENCRYPT_EMAIL=cisco@hamedalrasni.com/g' ~/gitops/bench-two.env
+sed -i 's/DB_HOST=/DB_HOST=mariadb-database/g' ~/gitops/bench-two.env
+sed -i 's/DB_PORT=/DB_PORT=3306/g' ~/gitops/bench-two.env
+echo "ROUTER=bench-two" >> ~/gitops/bench-two.env
+echo "SITES=\`erp.example.com\`,\`ciscoo.hamedalrasni.com\`" >> ~/gitops/bench-two.env
+echo "BENCH_NETWORK=bench-two" >> ~/gitops/bench-two.env
+
+
+docker compose --project-name bench-two \
+  --env-file ~/gitops/bench-two.env \
+  -f compose.yaml \
+  -f overrides/compose.redis.yaml \
+  -f overrides/compose.multi-bench.yaml \
+  -f overrides/compose.multi-bench-ssl.yaml config > ~/gitops/bench-two.yaml
+
+
+docker compose --project-name bench-two exec backend \
+  bench new-site --no-mariadb-socket --mariadb-root-password qeMuFqdPhmfpfNYm --admin-password h6KoS6%3xe4%We demo14.hamedalrasni.com --force
+
+docker compose --project-name bench-two exec backend \
+    bench drop-site demo14.hamedalrasni.com --mariadb-root-password qeMuFqdPhmfpfNYm --force
+    
