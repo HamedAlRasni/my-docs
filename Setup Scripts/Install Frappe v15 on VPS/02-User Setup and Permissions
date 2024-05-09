@@ -1,0 +1,28 @@
+# User Setup and Permissions
+
+### 1- Create a new user
+```shell
+sudo adduser hamedy
+```
+
+### 2- Add the user to the sudo group
+```shell
+sudo usermod -aG sudo hamedy
+```
+
+### 3- Switch to the new user
+```shell
+su hamedy
+```
+
+### 4- Navigate to the user's home directory
+```shell
+cd /home/hamedy/
+```
+
+### 5- Change directory permissions
+```shell
+sudo chmod -R o+rx /home/hamedy/
+```
+
+- Note: Replace `hamedy` with the desired username.
