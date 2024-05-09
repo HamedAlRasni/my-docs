@@ -1,8 +1,5 @@
-# Automatic Execution of dhclient Command on Ubuntu Server Boot
-
-# تنفيذ أمر dhclient تلقائيًا عند بدء تشغيل سيرفر ابنتو
-
-
+# Automatic dhclient Execution on Ubuntu Server Boot
+# تنفيذ dhclient تلقائيًا عند بدء تشغيل Ubuntu Server
 
 1. **استخدام systemd service**:
 يمكنك إنشاء وحدة systemd لتنفيذ الأمر عند بدء التشغيل. هذا الأسلوب يعتبر الأكثر شيوعًا ويوفر إمكانيات تكوين متقدمة.
