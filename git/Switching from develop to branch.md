@@ -77,32 +77,43 @@ git push origin version-15
 
 ### مثال عملي كامل
 
+- استنساخ المستودع
 ```bash
-# استنساخ المستودع
 git clone https://github.com/frappe/frappe.git
 cd frappe
+```
 
-# تنزيل الفروع البعيدة والتبديل إلى develop
+- تنزيل الفروع البعيدة والتبديل إلى develop
+```bash
 git fetch
 git checkout -b develop origin/develop
+```
 
-# إجراء التعديلات اللازمة
-# (افترض أنك أجريت التعديلات هنا)
-
-# إضافة التعديلات وتنفيذ الالتزام
+- إجراء التعديلات اللازمة
+(افترض أنك أجريت التعديلات هنا)
+إضافة التعديلات وتنفيذ الالتزام
+```bash
 git add .
 git commit -m "Completed updates on develop branch"
+```
 
-# إنشاء أو التبديل إلى فرع version-15
+- إنشاء أو التبديل إلى فرع version-15
+```bash
 git checkout -b version-15
+```
 
-# أو إذا كان الفرع موجودًا بالفعل:
-# git checkout version-15
+- أو إذا كان الفرع موجودًا بالفعل:
+```bash
+git checkout version-15
+```
 
-# دمج التغييرات من develop إلى version-15
+- دمج التغييرات من develop إلى version-15
+```bash
 git merge develop
+```
 
-# رفع التغييرات إلى المستودع البعيد
+- رفع التغييرات إلى المستودع البعيد
+```bash
 git push origin version-15
 ```
 
